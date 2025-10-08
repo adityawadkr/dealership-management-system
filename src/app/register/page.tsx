@@ -8,16 +8,28 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { authClient } from "@/lib/auth-client"
+import { toast } from "sonner"
+
+type ErrorTypes = Partial<Record<keyof typeof authClient.$ERROR_CODES, string>>;
+const errorCodes = {
+  USER_ALREADY_EXISTS: "User already registered with this email",
+} satisfies ErrorTypes;
+
+const getErrorMessage = (code: string) => {
+  if (code in errorCodes) {
+    return errorCodes[code as keyof typeof errorCodes];
+  }
+  return "Registration failed";
+};
 
 export default function RegisterPage() {
   const router = useRouter()
   const [loading, setLoading] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
-    setError(null)
 
     const formData = new FormData(e.currentTarget)
     const name = formData.get("name") as string
@@ -26,28 +38,25 @@ export default function RegisterPage() {
     const confirmPassword = formData.get("confirmPassword") as string
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match")
+      toast.error("Passwords do not match")
       setLoading(false)
       return
     }
 
-    // Mock registration - replace with actual auth logic
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      
-      if (name && email && password) {
-        // Store mock token
-        localStorage.setItem("bearer_token", "mock-token-" + Date.now())
-        router.push("/dashboard")
-      } else {
-        setError("Registration failed")
-      }
-    } catch (err) {
-      setError("Registration failed. Please try again.")
-    } finally {
+    const { data, error } = await authClient.signUp.email({
+      email,
+      name,
+      password
+    })
+
+    if (error?.code) {
+      toast.error(getErrorMessage(error.code))
       setLoading(false)
+      return
     }
+
+    toast.success("Account created successfully! Please sign in.")
+    router.push("/login?registered=true")
   }
 
   return (
@@ -69,7 +78,7 @@ export default function RegisterPage() {
                 id="name"
                 name="name"
                 type="text"
-                placeholder="John Doe"
+                placeholder="Rajesh Kumar"
                 required
                 autoComplete="name"
               />
@@ -105,11 +114,6 @@ export default function RegisterPage() {
                 autoComplete="new-password"
               />
             </div>
-            {error && (
-              <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
-                {error}
-              </div>
-            )}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Creating account..." : "Create Account"}
             </Button>

@@ -15,6 +15,13 @@
       "when": 1758692598041,
       "tag": "0001_reflective_shiva",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1759906983249,
+      "tag": "0002_omniscient_silver_samurai",
+      "breakpoints": true
     }
   ]
 }

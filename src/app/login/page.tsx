@@ -8,38 +8,37 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { authClient } from "@/lib/auth-client"
+import { toast } from "sonner"
 
 export default function LoginPage() {
   const router = useRouter()
   const [loading, setLoading] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
-    setError(null)
 
     const formData = new FormData(e.currentTarget)
     const email = formData.get("email") as string
     const password = formData.get("password") as string
+    const rememberMe = formData.get("rememberMe") === "on"
 
-    // Mock authentication - replace with actual auth logic
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      
-      if (email && password) {
-        // Store mock token
-        localStorage.setItem("bearer_token", "mock-token-" + Date.now())
-        router.push("/dashboard")
-      } else {
-        setError("Invalid credentials")
-      }
-    } catch (err) {
-      setError("Login failed. Please try again.")
-    } finally {
+    const { data, error } = await authClient.signIn.email({
+      email,
+      password,
+      rememberMe,
+      callbackURL: "/dashboard"
+    })
+
+    if (error?.code) {
+      toast.error("Invalid email or password. Please make sure you have already registered an account and try again.")
       setLoading(false)
+      return
     }
+
+    toast.success("Login successful!")
+    router.push("/dashboard")
   }
 
   return (
@@ -76,11 +75,17 @@ export default function LoginPage() {
                 autoComplete="current-password"
               />
             </div>
-            {error && (
-              <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
-                {error}
-              </div>
-            )}
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="rememberMe"
+                name="rememberMe"
+                className="size-4 rounded border-input"
+              />
+              <Label htmlFor="rememberMe" className="text-sm font-normal cursor-pointer">
+                Remember me
+              </Label>
+            </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Signing in..." : "Sign In"}
             </Button>
