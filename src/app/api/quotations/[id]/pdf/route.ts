@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import PDFDocument from "pdfkit"
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib"
 
 export const runtime = "nodejs"
 
@@ -23,156 +23,159 @@ export async function GET(
 
     const { data } = await res.json()
 
-    // Generate PDF
-    const doc = new PDFDocument({ margin: 50, size: "A4" })
-    const chunks: Buffer[] = []
+    // Create PDF
+    const pdfDoc = await PDFDocument.create()
+    const page = pdfDoc.addPage([595, 842]) // A4 size
+    const { width, height } = page.getSize()
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica)
+    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold)
 
-    doc.on("data", (chunk) => chunks.push(chunk))
+    let y = height - 50
 
-    await new Promise<void>((resolve, reject) => {
-      doc.on("end", resolve)
-      doc.on("error", reject)
+    // Header
+    page.drawText("QUOTATION", {
+      x: width / 2 - 60,
+      y,
+      size: 24,
+      font: fontBold,
+      color: rgb(0, 0, 0),
+    })
+    y -= 40
 
-      // Header
-      doc
-        .fontSize(24)
-        .font("Helvetica-Bold")
-        .text("QUOTATION", { align: "center" })
-        .moveDown()
+    // Company Info
+    page.drawText("Dealership DMS", { x: width - 200, y, size: 10, font })
+    y -= 15
+    page.drawText("Mumbai, Maharashtra", { x: width - 200, y, size: 10, font })
+    y -= 15
+    page.drawText("India", { x: width - 200, y, size: 10, font })
+    y -= 15
+    page.drawText("Phone: +91 98765 43210", { x: width - 200, y, size: 10, font })
+    y -= 15
+    page.drawText("Email: info@dealership.in", { x: width - 200, y, size: 10, font })
+    y -= 30
 
-      // Company Info (placeholder)
-      doc
-        .fontSize(10)
-        .font("Helvetica")
-        .text("Dealership DMS", { align: "right" })
-        .text("Mumbai, Maharashtra", { align: "right" })
-        .text("India", { align: "right" })
-        .text("Phone: +91 98765 43210", { align: "right" })
-        .text("Email: info@dealership.in", { align: "right" })
-        .moveDown()
+    // Quotation Details
+    page.drawText(`Quotation No: ${data.number}`, { x: 50, y, size: 12, font: fontBold })
+    y -= 15
+    page.drawText(`Date: ${new Date(data.created_at).toLocaleDateString("en-IN")}`, { x: 50, y, size: 10, font })
+    y -= 15
+    page.drawText(`Status: ${data.status.toUpperCase()}`, { x: 50, y, size: 10, font })
+    y -= 25
 
-      // Quotation Details
-      doc
-        .fontSize(12)
-        .font("Helvetica-Bold")
-        .text(`Quotation No: ${data.number}`)
-        .font("Helvetica")
-        .text(`Date: ${new Date(data.created_at).toLocaleDateString("en-IN")}`)
-        .text(`Status: ${data.status.toUpperCase()}`)
-        .moveDown()
+    // Customer Details
+    page.drawText("Bill To:", { x: 50, y, size: 12, font: fontBold })
+    y -= 15
+    page.drawText(data.customer, { x: 50, y, size: 10, font })
+    y -= 25
 
-      // Customer Details
-      doc
-        .fontSize(12)
-        .font("Helvetica-Bold")
-        .text("Bill To:")
-        .font("Helvetica")
-        .text(data.customer)
-        .moveDown()
+    // Line separator
+    page.drawLine({
+      start: { x: 50, y },
+      end: { x: width - 50, y },
+      thickness: 1,
+      color: rgb(0, 0, 0),
+    })
+    y -= 20
 
-      // Line separator
-      doc
-        .moveTo(50, doc.y)
-        .lineTo(550, doc.y)
-        .stroke()
-        .moveDown()
+    // Table Header
+    page.drawText("Description", { x: 50, y, size: 11, font: fontBold })
+    page.drawText("Amount", { x: width - 150, y, size: 11, font: fontBold })
+    y -= 5
+    page.drawLine({
+      start: { x: 50, y },
+      end: { x: width - 50, y },
+      thickness: 1,
+      color: rgb(0, 0, 0),
+    })
+    y -= 20
 
-      // Table Header
-      const tableTop = doc.y
-      doc
-        .fontSize(11)
-        .font("Helvetica-Bold")
-        .text("Description", 50, tableTop)
-        .text("Amount", 400, tableTop, { width: 100, align: "right" })
+    // Table Row
+    page.drawText(data.vehicle, { x: 50, y, size: 10, font })
+    page.drawText(`Rs. ${Number(data.amount).toLocaleString("en-IN")}`, {
+      x: width - 150,
+      y,
+      size: 10,
+      font,
+    })
+    y -= 60
 
-      // Line under header
-      doc
-        .moveTo(50, tableTop + 20)
-        .lineTo(550, tableTop + 20)
-        .stroke()
+    // Subtotal area
+    page.drawLine({
+      start: { x: width - 200, y },
+      end: { x: width - 50, y },
+      thickness: 0.5,
+      color: rgb(0, 0, 0),
+    })
+    y -= 15
 
-      // Table Row
-      const rowY = tableTop + 30
-      doc
-        .fontSize(10)
-        .font("Helvetica")
-        .text(data.vehicle, 50, rowY, { width: 300 })
-        .text(`₹${Number(data.amount).toLocaleString("en-IN")}`, 400, rowY, {
-          width: 100,
-          align: "right",
-        })
+    page.drawText("Subtotal:", { x: width - 200, y, size: 10, font })
+    page.drawText(`Rs. ${Number(data.amount).toLocaleString("en-IN")}`, {
+      x: width - 150,
+      y,
+      size: 10,
+      font,
+    })
+    y -= 15
 
-      // Subtotal area
-      const subtotalY = rowY + 60
-      doc
-        .moveTo(350, subtotalY - 10)
-        .lineTo(550, subtotalY - 10)
-        .stroke()
+    const taxAmount = Math.round(Number(data.amount) * 0.18) // 18% GST
+    page.drawText("GST (18%):", { x: width - 200, y, size: 10, font })
+    page.drawText(`Rs. ${taxAmount.toLocaleString("en-IN")}`, {
+      x: width - 150,
+      y,
+      size: 10,
+      font,
+    })
+    y -= 15
 
-      doc
-        .fontSize(10)
-        .font("Helvetica")
-        .text("Subtotal:", 350, subtotalY)
-        .text(`₹${Number(data.amount).toLocaleString("en-IN")}`, 400, subtotalY, {
-          width: 100,
-          align: "right",
-        })
+    const totalAmount = Number(data.amount) + taxAmount
+    page.drawText("Total:", { x: width - 200, y, size: 12, font: fontBold })
+    page.drawText(`Rs. ${totalAmount.toLocaleString("en-IN")}`, {
+      x: width - 150,
+      y,
+      size: 12,
+      font: fontBold,
+    })
+    y -= 5
+    page.drawLine({
+      start: { x: width - 200, y },
+      end: { x: width - 50, y },
+      thickness: 1,
+      color: rgb(0, 0, 0),
+    })
+    y -= 30
 
-      const taxY = subtotalY + 20
-      const taxAmount = Math.round(Number(data.amount) * 0.18) // 18% GST
-      doc
-        .text("GST (18%):", 350, taxY)
-        .text(`₹${taxAmount.toLocaleString("en-IN")}`, 400, taxY, {
-          width: 100,
-          align: "right",
-        })
-
-      const totalY = taxY + 20
-      const totalAmount = Number(data.amount) + taxAmount
-      doc
-        .fontSize(12)
-        .font("Helvetica-Bold")
-        .text("Total:", 350, totalY)
-        .text(`₹${totalAmount.toLocaleString("en-IN")}`, 400, totalY, {
-          width: 100,
-          align: "right",
-        })
-
-      doc
-        .moveTo(350, totalY + 20)
-        .lineTo(550, totalY + 20)
-        .stroke()
-
-      // Terms and Conditions
-      doc
-        .moveDown(3)
-        .fontSize(10)
-        .font("Helvetica-Bold")
-        .text("Terms & Conditions:")
-        .font("Helvetica")
-        .fontSize(9)
-        .text("1. This quotation is valid for 30 days from the date of issue.")
-        .text("2. Prices are subject to change without notice.")
-        .text("3. Payment terms: 50% advance, 50% on delivery.")
-        .text("4. Delivery within 15-30 days of booking confirmation.")
-
-      // Footer
-      doc
-        .moveDown(2)
-        .fontSize(8)
-        .text(
-          "Thank you for your business!",
-          50,
-          doc.page.height - 100,
-          { align: "center" }
-        )
-
-      doc.end()
+    // Terms and Conditions
+    page.drawText("Terms & Conditions:", { x: 50, y, size: 10, font: fontBold })
+    y -= 15
+    page.drawText("1. This quotation is valid for 30 days from the date of issue.", {
+      x: 50,
+      y,
+      size: 9,
+      font,
+    })
+    y -= 12
+    page.drawText("2. Prices are subject to change without notice.", { x: 50, y, size: 9, font })
+    y -= 12
+    page.drawText("3. Payment terms: 50% advance, 50% on delivery.", { x: 50, y, size: 9, font })
+    y -= 12
+    page.drawText("4. Delivery within 15-30 days of booking confirmation.", {
+      x: 50,
+      y,
+      size: 9,
+      font,
     })
 
-    const pdfBuffer = Buffer.concat(chunks)
+    // Footer
+    page.drawText("Thank you for your business!", {
+      x: width / 2 - 70,
+      y: 50,
+      size: 8,
+      font,
+    })
 
-    return new NextResponse(pdfBuffer, {
+    const pdfBytes = await pdfDoc.save()
+
+    return new NextResponse(pdfBytes, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="${data.number}.pdf"`,
