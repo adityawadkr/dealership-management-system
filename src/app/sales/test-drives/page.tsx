@@ -18,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 }
 
 const initial: TestDrive[] = [
-  { id: "td1", lead: "Jane Cooper", vehicle: "2023 Toyota RAV4", date: "2025-10-02 10:00", status: "scheduled" },
+  { id: "td1", lead: "Priya Sharma", vehicle: "Maruti Suzuki Swift", date: "2025-10-02 10:00", status: "scheduled" },
 ]
 
 export default function TestDrivesPage() {
@@ -53,7 +53,7 @@ export default function TestDrivesPage() {
             </div>
             <div className="md:col-span-1">
               <Label htmlFor="vehicle">Vehicle</Label>
-              <Input id="vehicle" name="vehicle" required />
+              <Input id="vehicle" name="vehicle" required placeholder="e.g., Tata Nexon, Hyundai Creta" />
             </div>
             <div className="md:col-span-1">
               <Label htmlFor="date">Date & Time</Label>

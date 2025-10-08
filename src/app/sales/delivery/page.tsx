@@ -18,7 +18,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 }
 
 const initial: Delivery[] = [
-  { id: "d1", bookingId: "b1", customer: "Jane Cooper", vehicle: "2023 Toyota RAV4", date: "2025-10-10", paymentStatus: "paid" },
+  { id: "d1", bookingId: "b1", customer: "Rajesh Kumar", vehicle: "Tata Nexon EV", date: "2025-10-10", paymentStatus: "paid" },
 ]
 
 export default function DeliveryPage() {
@@ -57,7 +57,7 @@ export default function DeliveryPage() {
             </div>
             <div className="md:col-span-2">
               <Label htmlFor="vehicle">Vehicle</Label>
-              <Input id="vehicle" name="vehicle" required />
+              <Input id="vehicle" name="vehicle" required placeholder="e.g., Maruti Swift, Mahindra XUV700" />
             </div>
             <div>
               <Label htmlFor="date">Date</Label>

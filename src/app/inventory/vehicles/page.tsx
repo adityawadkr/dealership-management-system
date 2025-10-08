@@ -144,7 +144,7 @@ export default function VehicleInventoryPage() {
               <SelectItem value="all">All Categories</SelectItem>
               <SelectItem value="SUV">SUV</SelectItem>
               <SelectItem value="Sedan">Sedan</SelectItem>
-              <SelectItem value="Truck">Truck</SelectItem>
+              <SelectItem value="Hatchback">Hatchback</SelectItem>
               <SelectItem value="EV">EV</SelectItem>
             </SelectContent>
           </Select>
@@ -218,7 +218,7 @@ export default function VehicleInventoryPage() {
                   <TableCell className="font-mono text-xs">{v.vin}</TableCell>
                   <TableCell>{v.year} {v.make} {v.model}</TableCell>
                   <TableCell>{v.category}</TableCell>
-                  <TableCell className="text-right">${v.price.toLocaleString()}</TableCell>
+                  <TableCell className="text-right">₹{v.price.toLocaleString('en-IN')}</TableCell>
                   <TableCell className="text-center">
                     <div className="flex items-center justify-center gap-2">
                       {v.stock}
@@ -273,11 +273,11 @@ function VehicleFormDialog({ vehicle, onSubmit }: { vehicle: Vehicle | null; onS
         </div>
         <div>
           <Label htmlFor="make">Make</Label>
-          <Input name="make" id="make" required defaultValue={vehicle?.make} />
+          <Input name="make" id="make" required defaultValue={vehicle?.make} placeholder="e.g., Maruti Suzuki, Tata, Mahindra" />
         </div>
         <div>
           <Label htmlFor="model">Model</Label>
-          <Input name="model" id="model" required defaultValue={vehicle?.model} />
+          <Input name="model" id="model" required defaultValue={vehicle?.model} placeholder="e.g., Swift, Nexon, XUV700" />
         </div>
         <div>
           <Label htmlFor="year">Year</Label>
@@ -292,7 +292,7 @@ function VehicleFormDialog({ vehicle, onSubmit }: { vehicle: Vehicle | null; onS
             <SelectContent>
               <SelectItem value="SUV">SUV</SelectItem>
               <SelectItem value="Sedan">Sedan</SelectItem>
-              <SelectItem value="Truck">Truck</SelectItem>
+              <SelectItem value="Hatchback">Hatchback</SelectItem>
               <SelectItem value="EV">EV</SelectItem>
             </SelectContent>
           </Select>
@@ -302,8 +302,8 @@ function VehicleFormDialog({ vehicle, onSubmit }: { vehicle: Vehicle | null; onS
           <Input name="color" id="color" defaultValue={vehicle?.color} />
         </div>
         <div>
-          <Label htmlFor="price">Price</Label>
-          <Input name="price" id="price" type="number" step="100" defaultValue={vehicle?.price ?? 0} />
+          <Label htmlFor="price">Price (₹)</Label>
+          <Input name="price" id="price" type="number" step="10000" defaultValue={vehicle?.price ?? 0} />
         </div>
         <div>
           <Label htmlFor="stock">Stock</Label>

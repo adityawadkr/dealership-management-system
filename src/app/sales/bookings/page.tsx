@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 }
 
 const initial: Booking[] = [
-  { id: "b1", customer: "Jane Cooper", vehicle: "2023 Toyota RAV4", quotationNo: "Q-1001", date: "2025-10-05", status: "booked" },
+  { id: "b1", customer: "Rajesh Kumar", vehicle: "Tata Nexon EV", quotationNo: "Q-1001", date: "2025-10-05", status: "booked" },
 ]
 
 export default function BookingsPage() {
@@ -113,7 +113,7 @@ export default function BookingsPage() {
             </div>
             <div className="md:col-span-2">
               <Label htmlFor="vehicle">Vehicle</Label>
-              <Input id="vehicle" name="vehicle" required />
+              <Input id="vehicle" name="vehicle" required placeholder="e.g., Maruti Swift, Mahindra XUV700" />
             </div>
             <div>
               <Label htmlFor="quotationNo">Quotation No.</Label>

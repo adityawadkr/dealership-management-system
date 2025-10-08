@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { FilePlus2, ReceiptText } from "lucide-react"
+import { FilePlus2, ReceiptText, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -93,6 +93,45 @@ export default function QuotationsPage() {
     setRows((p) => [next, ...p])
   }
 
+  async function handleStatusChange(id: string, newStatus: Quote["status"]) {
+    const token = typeof window !== "undefined" ? localStorage.getItem("bearer_token") : null
+    try {
+      const res = await fetch(`/api/quotations/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ status: newStatus }),
+      })
+      if (!res.ok) throw new Error("Failed to update status")
+      setRows((prev) => prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r)))
+    } catch (e: any) {
+      setError(e.message || "Error updating status")
+    }
+  }
+
+  async function handleDownloadPDF(id: string, number: string) {
+    const token = typeof window !== "undefined" ? localStorage.getItem("bearer_token") : null
+    try {
+      const res = await fetch(`/api/quotations/${id}/pdf`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      })
+      if (!res.ok) throw new Error("Failed to generate PDF")
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a")
+      a.href = url
+      a.download = `${number}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } catch (e: any) {
+      setError(e.message || "Error downloading PDF")
+    }
+  }
+
   return (
     <div className="space-y-4 p-4">
       <div className="text-xl font-semibold flex items-center gap-2"><ReceiptText className="size-5"/> Quotations</div>
@@ -113,8 +152,8 @@ export default function QuotationsPage() {
               <Input id="vehicle" name="vehicle" required />
             </div>
             <div>
-              <Label htmlFor="amount">Amount</Label>
-              <Input id="amount" name="amount" type="number" step="100" required />
+              <Label htmlFor="amount">Amount (₹)</Label>
+              <Input id="amount" name="amount" type="number" step="1000" required />
             </div>
             <div>
               <Label>Status</Label>
@@ -152,6 +191,7 @@ export default function QuotationsPage() {
                 <TableHead>Vehicle</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -160,8 +200,24 @@ export default function QuotationsPage() {
                   <TableCell className="font-mono text-xs">{r.number}</TableCell>
                   <TableCell>{r.customer}</TableCell>
                   <TableCell>{r.vehicle}</TableCell>
-                  <TableCell className="text-right">${r.amount.toLocaleString()}</TableCell>
-                  <TableCell className="capitalize">{r.status}</TableCell>
+                  <TableCell className="text-right">₹{r.amount.toLocaleString('en-IN')}</TableCell>
+                  <TableCell>
+                    <Select value={r.status} onValueChange={(val) => handleStatusChange(r.id, val as Quote["status"])}>
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="sent">Sent</SelectItem>
+                        <SelectItem value="accepted">Accepted</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <Button size="sm" variant="outline" onClick={() => handleDownloadPDF(r.id, r.number)}>
+                      <Download className="size-4 mr-1" /> PDF
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -15,7 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 }
 
 const initial: ServiceRecord[] = [
-  { id: "s1", customer: "Jane Cooper", vehicle: "2023 Toyota RAV4", jobNo: "JC-0001", date: "2025-09-21", amount: 185.5 },
+  { id: "s1", customer: "Rajesh Kumar", vehicle: "Tata Nexon", jobNo: "JC-0001", date: "2025-09-21", amount: 8500 },
 ]
 
 export default function ServiceHistoryPage() {
@@ -84,7 +84,7 @@ export default function ServiceHistoryPage() {
                   <TableCell>{r.vehicle}</TableCell>
                   <TableCell className="font-mono text-xs">{r.jobNo}</TableCell>
                   <TableCell className="font-mono text-xs">{r.date}</TableCell>
-                  <TableCell className="text-right">${r.amount.toFixed(2)}</TableCell>
+                  <TableCell className="text-right">₹{r.amount.toLocaleString('en-IN')}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

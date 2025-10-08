@@ -8,25 +8,25 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 const cashflow = [
-  { month: "Jan", inflow: 52000, outflow: 36000 },
-  { month: "Feb", inflow: 56000, outflow: 38000 },
-  { month: "Mar", inflow: 59000, outflow: 40000 },
-  { month: "Apr", inflow: 64000, outflow: 42000 },
-  { month: "May", inflow: 69000, outflow: 46000 },
-  { month: "Jun", inflow: 72000, outflow: 48000 },
+  { month: "Jan", inflow: 520000, outflow: 360000 },
+  { month: "Feb", inflow: 560000, outflow: 380000 },
+  { month: "Mar", inflow: 590000, outflow: 400000 },
+  { month: "Apr", inflow: 640000, outflow: 420000 },
+  { month: "May", inflow: 690000, outflow: 460000 },
+  { month: "Jun", inflow: 720000, outflow: 480000 },
 ]
 
 export default function FinancePage() {
   const invoices = [
-    { number: "INV-2001", customer: "Jane Cooper", amount: 32500, status: "Paid" },
-    { number: "INV-2002", customer: "Wade Warren", amount: 28900, status: "Pending" },
-    { number: "INV-2003", customer: "Jenny Wilson", amount: 41500, status: "Overdue" },
+    { number: "INV-2001", customer: "Rajesh Kumar", amount: 2650000, status: "Paid" },
+    { number: "INV-2002", customer: "Priya Sharma", amount: 1890000, status: "Pending" },
+    { number: "INV-2003", customer: "Amit Patel", amount: 3250000, status: "Overdue" },
   ]
 
   const summaries = [
-    { title: "AR (Open)", value: "$57,800" },
-    { title: "AP (Open)", value: "$23,450" },
-    { title: "Cash on Hand", value: "$182,300" },
+    { title: "AR (Open)", value: "₹45,80,000" },
+    { title: "AP (Open)", value: "₹18,50,000" },
+    { title: "Cash on Hand", value: "₹1,45,60,000" },
   ]
 
   return (
@@ -92,7 +92,7 @@ export default function FinancePage() {
                 <TableRow key={inv.number}>
                   <TableCell className="font-mono text-xs">{inv.number}</TableCell>
                   <TableCell>{inv.customer}</TableCell>
-                  <TableCell className="text-right">${inv.amount.toLocaleString()}</TableCell>
+                  <TableCell className="text-right">₹{inv.amount.toLocaleString('en-IN')}</TableCell>
                   <TableCell>{inv.status}</TableCell>
                 </TableRow>
               ))}

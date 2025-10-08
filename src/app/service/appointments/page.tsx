@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 }
 
 const initial: Appointment[] = [
-  { id: "a1", customer: "Wade Warren", vehicle: "2022 Honda Civic", date: "2025-10-03 09:30", serviceType: "Periodic Service", status: "scheduled" },
+  { id: "a1", customer: "Amit Patel", vehicle: "Maruti Suzuki Baleno", date: "2025-10-03 09:30", serviceType: "Periodic Service", status: "scheduled" },
 ]
 
 export default function ServiceAppointmentsPage() {
@@ -115,7 +115,7 @@ export default function ServiceAppointmentsPage() {
             </div>
             <div className="md:col-span-2">
               <Label htmlFor="vehicle">Vehicle</Label>
-              <Input id="vehicle" name="vehicle" placeholder="e.g., 2023 Toyota RAV4" required />
+              <Input id="vehicle" name="vehicle" placeholder="e.g., Tata Nexon, Hyundai Creta" required />
             </div>
             <div>
               <Label htmlFor="date">Date & Time</Label>

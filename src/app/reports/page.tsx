@@ -8,12 +8,12 @@ import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartToo
 import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis, Area, AreaChart } from "recharts"
 
 const revenueData = [
-  { month: "Jan", revenue: 42000, expenses: 28000 },
-  { month: "Feb", revenue: 48000, expenses: 30000 },
-  { month: "Mar", revenue: 51000, expenses: 32000 },
-  { month: "Apr", revenue: 60000, expenses: 36000 },
-  { month: "May", revenue: 64000, expenses: 38000 },
-  { month: "Jun", revenue: 70000, expenses: 41000 },
+  { month: "Jan", revenue: 4200000, expenses: 2800000 },
+  { month: "Feb", revenue: 4800000, expenses: 3000000 },
+  { month: "Mar", revenue: 5100000, expenses: 3200000 },
+  { month: "Apr", revenue: 6000000, expenses: 3600000 },
+  { month: "May", revenue: 6400000, expenses: 3800000 },
+  { month: "Jun", revenue: 7000000, expenses: 4100000 },
 ]
 
 const salesFunnel = [
@@ -35,8 +35,8 @@ const hrData = [
 
 export default function ReportsPage() {
   const kpis = [
-    { title: "Monthly Revenue", value: "$70,000", desc: "June", icon: <Wallet className="size-4" /> },
-    { title: "Gross Profit", value: "$29,000", desc: "June", icon: <CircleDollarSign className="size-4" /> },
+    { title: "Monthly Revenue", value: "₹70,00,000", desc: "June", icon: <Wallet className="size-4" /> },
+    { title: "Gross Profit", value: "₹29,00,000", desc: "June", icon: <CircleDollarSign className="size-4" /> },
     { title: "Active Leads", value: "320", desc: "CRM", icon: <TrendingUp className="size-4" /> },
     { title: "Headcount", value: "36", desc: "HR", icon: <Users className="size-4" /> },
   ]
