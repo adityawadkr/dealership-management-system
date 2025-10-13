@@ -90,6 +90,9 @@ export default function Dashboard() {
   const [theme, setTheme] = useState<string | null>(null)
   const [dateRange, setDateRange] = useState<'Today' | 'This Week'>('Today')
 
+  // Call useMemo BEFORE any conditional returns
+  const gridClass = useMemo(() => `grid gap-4 p-4 ${showRightRail ? 'lg:grid-cols-[1fr_320px]' : ''}`,[showRightRail])
+
   // Protect the route - redirect if not authenticated
   useEffect(() => {
     if (!isPending && !session?.user) {
@@ -123,8 +126,6 @@ export default function Dashboard() {
   if (!session?.user) {
     return null
   }
-
-  const gridClass = useMemo(() => `grid gap-4 p-4 ${showRightRail ? 'lg:grid-cols-[1fr_320px]' : ''}`,[showRightRail])
 
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark'
