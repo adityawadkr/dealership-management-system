@@ -1,9 +1,28 @@
+"use client"
+
 import Link from "next/link"
-import { Car, LineChart, Wrench, Users, ArrowRight, CheckCircle2 } from "lucide-react"
+import { Car, LineChart, Wrench, Users, ArrowRight, CheckCircle2, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useSession, authClient } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 export default function LandingPage() {
+  const { data: session, isPending } = useSession()
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    const { error } = await authClient.signOut()
+    if (error?.code) {
+      toast.error("Failed to sign out")
+    } else {
+      localStorage.removeItem("bearer_token")
+      toast.success("Signed out successfully")
+      router.refresh()
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       {/* Header */}
@@ -14,12 +33,31 @@ export default function LandingPage() {
             <span>Dealership DMS</span>
           </div>
           <nav className="flex items-center gap-4">
-            <Link href="/login">
-              <Button variant="ghost">Login</Button>
-            </Link>
-            <Link href="/register">
-              <Button>Get Started</Button>
-            </Link>
+            {isPending ? (
+              <div className="h-9 w-24 animate-pulse bg-muted rounded-md" />
+            ) : session?.user ? (
+              <>
+                <span className="text-sm text-muted-foreground">
+                  {session.user.name}
+                </span>
+                <Link href="/dashboard">
+                  <Button variant="ghost">Dashboard</Button>
+                </Link>
+                <Button variant="ghost" onClick={handleSignOut}>
+                  <LogOut className="size-4 mr-2" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost">Login</Button>
+                </Link>
+                <Link href="/register">
+                  <Button>Get Started</Button>
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       </header>
