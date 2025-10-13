@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { appointments } from '@/db/schema';
 import { eq, and, gte, lte, count } from 'drizzle-orm';
+import { sendAppointmentConfirmation } from '@/lib/email';
 
 const VALID_STATUSES = ['scheduled', 'in_progress', 'completed'];
 
@@ -95,7 +96,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { customer, vehicle, date, serviceType, status } = body;
+    const { customer, vehicle, date, serviceType, status, email } = body;
 
     // Validation
     if (!customer || typeof customer !== 'string' || customer.trim() === '') {
@@ -142,6 +143,20 @@ export async function POST(request: NextRequest) {
       status,
       createdAt: Date.now()
     }).returning();
+
+    // Send confirmation email if email is provided
+    if (email && typeof email === 'string' && email.includes('@')) {
+      await sendAppointmentConfirmation({
+        to: email,
+        customerName: customer.trim(),
+        vehicle: vehicle.trim(),
+        appointmentDate: new Date(date).toLocaleString('en-IN', { 
+          dateStyle: 'medium', 
+          timeStyle: 'short' 
+        }),
+        serviceType: serviceType.trim()
+      }).catch(err => console.error('Email send failed:', err));
+    }
 
     return NextResponse.json({
       data: newAppointment[0]

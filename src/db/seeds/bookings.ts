@@ -17,7 +17,7 @@ async function main() {
             quotationNo: 'Q2024-002',
             date: '2024-12-30',
             status: 'booked',
-            createdAt: Math.floor(new Date('2024-12-10').getTime() / 1000),
+            createdAt: Math.floor(new Date('2024-12-08').getTime() / 1000),
         },
         {
             customer: 'Sanjay Gupta',
@@ -25,7 +25,7 @@ async function main() {
             quotationNo: 'Q2024-003',
             date: '2024-11-25',
             status: 'cancelled',
-            createdAt: Math.floor(new Date('2024-11-15').getTime() / 1000),
+            createdAt: Math.floor(new Date('2024-11-20').getTime() / 1000),
         },
         {
             customer: 'Pooja Nair',
@@ -41,7 +41,7 @@ async function main() {
             quotationNo: 'Q2024-005',
             date: '2024-11-30',
             status: 'delivered',
-            createdAt: Math.floor(new Date('2024-11-20').getTime() / 1000),
+            createdAt: Math.floor(new Date('2024-11-25').getTime() / 1000),
         },
         {
             customer: 'Deepika Pillai',

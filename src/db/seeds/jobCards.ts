@@ -2,6 +2,9 @@ import { db } from '@/db';
 import { jobCards } from '@/db/schema';
 
 async function main() {
+    const baseTimestamp = Date.now();
+    const daysInMs = 24 * 60 * 60 * 1000;
+
     const sampleJobCards = [
         {
             jobNo: 'JOB-001',
@@ -10,7 +13,7 @@ async function main() {
             partsUsed: 'Oil Filter, Air Filter, Engine Oil',
             notes: 'Customer reported unusual noise during acceleration. Completed routine maintenance and addressed noise issue.',
             status: 'closed',
-            createdAt: Math.floor(new Date('2024-11-15T09:30:00Z').getTime() / 1000),
+            createdAt: baseTimestamp - (15 * daysInMs),
         },
         {
             jobNo: 'JOB-002',
@@ -19,34 +22,34 @@ async function main() {
             partsUsed: 'Brake Pads, Brake Fluid',
             notes: 'Replaced worn brake pads as requested. Customer satisfaction confirmed.',
             status: 'closed',
-            createdAt: Math.floor(new Date('2024-11-20T14:15:00Z').getTime() / 1000),
+            createdAt: baseTimestamp - (12 * daysInMs),
         },
         {
             jobNo: 'JOB-003',
             appointmentId: 3,
             technician: 'Anil Patil',
             partsUsed: null,
-            notes: 'Diagnostic check completed. Vehicle systems operating normally.',
+            notes: null,
             status: 'open',
-            createdAt: Math.floor(new Date('2024-12-01T11:45:00Z').getTime() / 1000),
+            createdAt: baseTimestamp - (8 * daysInMs),
         },
         {
             jobNo: 'JOB-004',
             appointmentId: null,
             technician: 'Ravi Kumar',
             partsUsed: 'Spark Plugs, Ignition Coils',
-            notes: null,
-            status: 'open',
-            createdAt: Math.floor(new Date('2024-12-05T16:20:00Z').getTime() / 1000),
+            notes: 'Routine maintenance completed successfully. All systems checked and verified.',
+            status: 'closed',
+            createdAt: baseTimestamp - (5 * daysInMs),
         },
         {
             jobNo: 'JOB-005',
             appointmentId: 5,
             technician: 'Suresh Sharma',
             partsUsed: 'Transmission Fluid, Transmission Filter',
-            notes: 'Routine maintenance completed successfully. All systems checked and verified.',
-            status: 'closed',
-            createdAt: Math.floor(new Date('2024-12-08T10:00:00Z').getTime() / 1000),
+            notes: null,
+            status: 'open',
+            createdAt: baseTimestamp - (3 * daysInMs),
         },
         {
             jobNo: 'JOB-006',
@@ -55,7 +58,7 @@ async function main() {
             partsUsed: 'Battery, Battery Terminals',
             notes: 'Customer reported starting issues. Replaced old battery and cleaned terminals.',
             status: 'open',
-            createdAt: Math.floor(new Date('2024-12-12T13:30:00Z').getTime() / 1000),
+            createdAt: baseTimestamp - (1 * daysInMs),
         },
     ];
 

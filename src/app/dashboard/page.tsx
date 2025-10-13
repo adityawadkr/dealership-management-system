@@ -1,5 +1,8 @@
 "use client"
 
+import { useEffect, useState, useMemo } from "react"
+import { useRouter } from "next/navigation"
+import { useSession } from "@/lib/auth-client"
 import Link from "next/link"
 import { Car, ClipboardList, Gauge, LineChart as LineChartIcon, Package, Receipt, Settings2, Users, HandCoins, HeartHandshake, CalendarCheck, Wrench, Search, Bell, Sun, MoreHorizontal } from "lucide-react"
 import {
@@ -23,7 +26,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 import { Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis, PieChart, Pie, Cell } from "recharts"
-import { useEffect, useMemo, useState } from "react"
 
 const kpis = [
   { title: "Leads", value: 736, desc: "+11.01%", trend: "up" as const },
@@ -82,9 +84,18 @@ const notifications = [
 ]
 
 export default function Dashboard() {
+  const router = useRouter()
+  const { data: session, isPending } = useSession()
   const [showRightRail, setShowRightRail] = useState(false)
   const [theme, setTheme] = useState<string | null>(null)
   const [dateRange, setDateRange] = useState<'Today' | 'This Week'>('Today')
+
+  // Protect the route - redirect if not authenticated
+  useEffect(() => {
+    if (!isPending && !session?.user) {
+      router.push("/login?redirect=/dashboard")
+    }
+  }, [session, isPending, router])
 
   useEffect(() => {
     const stored = localStorage.getItem("theme")
@@ -95,6 +106,23 @@ export default function Dashboard() {
       setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light')
     }
   }, [])
+
+  // Show loading state while checking session
+  if (isPending) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+          <p className="mt-4 text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Don't render dashboard if not authenticated
+  if (!session?.user) {
+    return null
+  }
 
   const gridClass = useMemo(() => `grid gap-4 p-4 ${showRightRail ? 'lg:grid-cols-[1fr_320px]' : ''}`,[showRightRail])
 
