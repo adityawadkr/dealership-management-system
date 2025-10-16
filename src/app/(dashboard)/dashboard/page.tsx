@@ -38,13 +38,13 @@ export default function DashboardPage() {
         const headers = { Authorization: `Bearer ${token}` }
 
         const [leadsRes, vehiclesRes, appointmentsRes, bookingsRes, quotationsRes, deliveriesRes, partsRes] = await Promise.all([
-          hasPermission('leads', 'read') ? fetch("/api/leads", { headers }) : Promise.resolve(null),
-          hasPermission('vehicles', 'read') ? fetch("/api/vehicles", { headers }) : Promise.resolve(null),
-          hasPermission('appointments', 'read') ? fetch("/api/appointments", { headers }) : Promise.resolve(null),
-          hasPermission('bookings', 'read') ? fetch("/api/bookings", { headers }) : Promise.resolve(null),
-          hasPermission('quotations', 'read') ? fetch("/api/quotations", { headers }) : Promise.resolve(null),
-          hasPermission('deliveries', 'read') ? fetch("/api/deliveries", { headers }) : Promise.resolve(null),
-          hasPermission('spareParts', 'read') ? fetch("/api/spare-parts", { headers }) : Promise.resolve(null)
+          hasPermission('leads.view') ? fetch("/api/leads", { headers }) : Promise.resolve(null),
+          hasPermission('vehicles.view') ? fetch("/api/vehicles", { headers }) : Promise.resolve(null),
+          hasPermission('appointments.view') ? fetch("/api/appointments", { headers }) : Promise.resolve(null),
+          hasPermission('bookings.view') ? fetch("/api/bookings", { headers }) : Promise.resolve(null),
+          hasPermission('quotations.view') ? fetch("/api/quotations", { headers }) : Promise.resolve(null),
+          hasPermission('sales.view') ? fetch("/api/deliveries", { headers }) : Promise.resolve(null),
+          hasPermission('spare-parts.view') ? fetch("/api/spare-parts", { headers }) : Promise.resolve(null)
         ])
 
         const leads = leadsRes ? await leadsRes.json() : []
@@ -110,7 +110,7 @@ export default function DashboardPage() {
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {hasPermission('leads', 'read') && (
+          {hasPermission('leads.view') && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Active Leads</CardTitle>
@@ -123,7 +123,7 @@ export default function DashboardPage() {
             </Card>
           )}
 
-          {hasPermission('vehicles', 'read') && (
+          {hasPermission('vehicles.view') && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Vehicles</CardTitle>
@@ -136,7 +136,7 @@ export default function DashboardPage() {
             </Card>
           )}
 
-          {hasPermission('appointments', 'read') && (
+          {hasPermission('appointments.view') && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Appointments</CardTitle>
@@ -149,7 +149,7 @@ export default function DashboardPage() {
             </Card>
           )}
 
-          {hasPermission('bookings', 'read') && (
+          {hasPermission('bookings.view') && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Revenue</CardTitle>
@@ -162,7 +162,7 @@ export default function DashboardPage() {
             </Card>
           )}
 
-          {hasPermission('bookings', 'read') && (
+          {hasPermission('bookings.view') && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Active Bookings</CardTitle>
@@ -175,7 +175,7 @@ export default function DashboardPage() {
             </Card>
           )}
 
-          {hasPermission('deliveries', 'read') && (
+          {hasPermission('sales.view') && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Pending Deliveries</CardTitle>
@@ -188,7 +188,7 @@ export default function DashboardPage() {
             </Card>
           )}
 
-          {hasPermission('spareParts', 'read') && (
+          {hasPermission('spare-parts.view') && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Spare Parts</CardTitle>
@@ -201,7 +201,7 @@ export default function DashboardPage() {
             </Card>
           )}
 
-          {hasPermission('quotations', 'read') && (
+          {hasPermission('quotations.view') && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Pending Quotations</CardTitle>
@@ -223,17 +223,17 @@ export default function DashboardPage() {
             <CardDescription>Common tasks and operations</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-2">
-            {hasPermission('leads', 'create') && (
-              <a href="/dashboard/sales/leads" className="text-sm hover:underline">→ Create New Lead</a>
+            {hasPermission('leads.create') && (
+              <a href="/sales/leads" className="text-sm hover:underline">→ Create New Lead</a>
             )}
-            {hasPermission('appointments', 'create') && (
-              <a href="/dashboard/service/appointments" className="text-sm hover:underline">→ Schedule Service Appointment</a>
+            {hasPermission('appointments.create') && (
+              <a href="/service/appointments" className="text-sm hover:underline">→ Schedule Service Appointment</a>
             )}
-            {hasPermission('vehicles', 'create') && (
-              <a href="/dashboard/inventory/vehicles" className="text-sm hover:underline">→ Add Vehicle to Inventory</a>
+            {hasPermission('vehicles.create') && (
+              <a href="/inventory/vehicles" className="text-sm hover:underline">→ Add Vehicle to Inventory</a>
             )}
-            {hasPermission('quotations', 'create') && (
-              <a href="/dashboard/sales/quotations" className="text-sm hover:underline">→ Generate Quotation</a>
+            {hasPermission('quotations.create') && (
+              <a href="/sales/quotations" className="text-sm hover:underline">→ Generate Quotation</a>
             )}
           </CardContent>
         </Card>
